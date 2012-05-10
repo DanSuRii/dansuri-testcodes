@@ -82,5 +82,4 @@ void TestUnitRepository::DoPrintCharArr( char** pTarget, size_t sizeArr )
 	for(size_t i = 0; i < sizeArr; ++i)
 		std::cout << pTarget[i] << std::endl;
 
-	NULL;
 }
