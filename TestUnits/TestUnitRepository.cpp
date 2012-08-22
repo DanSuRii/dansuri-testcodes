@@ -39,9 +39,9 @@ void TestUnitRepository::PrintMenu()
 {
 	static char* menuPan[] =
 	{
-		"********************************************************",
-		"*						MENU PAN						*"
-		"********************************************************",
+		"****************************************************",
+		"*                    MENU PAN                      *",
+		"****************************************************",
 	};
 
 	DoPrintCharArr(menuPan, _countof(menuPan));
@@ -51,7 +51,9 @@ void TestUnitRepository::PrintMenu()
 	public:
 		void operator()(MENUMAP_PAIR pair)
 		{
-			std::cout << pair.first << "." << (pair.second->GetMyName()) << std::endl;
+			std::cout << pair.first << "." << (pair.second->GetMyName()) << 
+				
+				((pair.first % 3 == 0)? '\n' : '\t');
 		}
 	} PrintMenuInstance;
 
@@ -62,7 +64,7 @@ TestUnitRepository::MENU_MAP::iterator TestUnitRepository::GetSelection()
 {
 	static char* selectPrint[] = 
 	{
-		"Press Menu: "
+		"\nPress Menu: "
 	};
 	 
 
