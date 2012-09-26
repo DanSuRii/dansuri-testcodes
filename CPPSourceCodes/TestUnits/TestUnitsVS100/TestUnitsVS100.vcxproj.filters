@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\TemplateMetaProgramming">
+      <UniqueIdentifier>{cf7cd80b-5dec-428b-b248-bba9b0c2da2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Boost">
+      <UniqueIdentifier>{00fb9c18-1f44-43e9-9a50-01b34caebec6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TestUnits\RegisterUnit.h">
@@ -26,6 +32,9 @@
     </ClInclude>
     <ClInclude Include="..\TestUnits\critsect.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TestUnits\Boost\chat_message.hpp">
+      <Filter>소스 파일\Boost</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +70,15 @@
     </ClCompile>
     <ClCompile Include="..\TestUnits\filelineArgPass.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\TemplateMetaProgramming\Exam1.cpp">
+      <Filter>소스 파일\TemplateMetaProgramming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\TemplateMetaProgramming\Exam2.cpp">
+      <Filter>소스 파일\TemplateMetaProgramming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\Boost\AsioChatServer.cpp">
+      <Filter>소스 파일\Boost</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
