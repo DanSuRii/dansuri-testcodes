@@ -80,5 +80,11 @@
     <ClCompile Include="..\TestUnits\Boost\AsioChatServer.cpp">
       <Filter>소스 파일\Boost</Filter>
     </ClCompile>
+    <ClCompile Include="..\TestUnits\sizeWrapper.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\Boost\AsioEchoServer.cpp">
+      <Filter>소스 파일\Boost</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

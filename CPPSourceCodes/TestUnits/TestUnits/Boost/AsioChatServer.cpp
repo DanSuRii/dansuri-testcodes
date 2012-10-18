@@ -242,7 +242,7 @@ public:
 };
 
 
-void WorkerThread( void*  )
+static void WorkerThread( void*  )
 {
 	g_Status = STATUS_RUNNING;
 	char cLastInput;
@@ -261,6 +261,7 @@ void WorkerThread( void*  )
 
 		std::cout << std::endl;
 
+		__int64 ;
 	} while (g_Status != STATUS_END);
 }
 
