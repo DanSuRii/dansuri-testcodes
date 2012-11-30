@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{62531893-925A-49F1-939C-CBCE6DD88B22}</ProjectGuid>
+    <ProjectGuid>{0A0458C1-DB22-48CC-820E-B3CFD7D65508}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>TestUnitsVS100</RootNamespace>
+    <RootNamespace>TodayHumor_Q4</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -32,11 +32,9 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\CPPLibs\AddIncludeBoostSTLPort.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\CPPLibs\AddIncludeBoostSTLPort.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -47,12 +45,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <TreatWarningAsError>false</TreatWarningAsError>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\TestUnits;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -77,33 +74,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\TestUnits\Boost\chat_message.hpp" />
-    <ClInclude Include="..\TestUnits\critsect.h" />
-    <ClInclude Include="..\TestUnits\RegisterUnit.h" />
-    <ClInclude Include="..\TestUnits\stdafx.h" />
-    <ClInclude Include="..\TestUnits\TestUnitRepository.h" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\TestUnits\AsioTest.cpp" />
-    <ClCompile Include="..\TestUnits\Boost\AsioChatServer.cpp" />
-    <ClCompile Include="..\TestUnits\Boost\AsioEchoServer.cpp" />
-    <ClCompile Include="..\TestUnits\countof.cpp" />
-    <ClCompile Include="..\TestUnits\DataRepositoryTemplate.cpp" />
-    <ClCompile Include="..\TestUnits\filelineArgPass.cpp" />
-    <ClCompile Include="..\TestUnits\foreachtest.cpp" />
-    <ClCompile Include="..\TestUnits\lambda.cpp" />
-    <ClCompile Include="..\TestUnits\listToArr.cpp" />
-    <ClCompile Include="..\TestUnits\main.cpp" />
-    <ClCompile Include="..\TestUnits\ReadWriteLockTest.cpp" />
-    <ClCompile Include="..\TestUnits\STDCopy.cpp" />
-    <ClCompile Include="..\TestUnits\stringTest.cpp" />
-    <ClCompile Include="..\TestUnits\strPTimeTest.cpp" />
-    <ClCompile Include="..\TestUnits\TemplateMetaProgramming\Exam1.cpp" />
-    <ClCompile Include="..\TestUnits\TemplateMetaProgramming\Exam2.cpp" />
-    <ClCompile Include="..\TestUnits\templateSingleton.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\TestUnits\TestUnitRepository.cpp" />
+    <None Include="input.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
