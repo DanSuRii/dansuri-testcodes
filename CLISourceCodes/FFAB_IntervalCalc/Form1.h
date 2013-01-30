@@ -9,19 +9,15 @@ namespace FFAB_IntervalCalc {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
+	ref struct FLASHTICK;
+
 	/// <summary>
 	/// Form1에 대한 요약입니다.
 	/// </summary>
 	public ref class Form1 : public System::Windows::Forms::Form
 	{
 	public:
-		Form1(void)
-		{
-			InitializeComponent();
-			//
-			//TODO: 생성자 코드를 여기에 추가합니다.
-			//
-		}
+		Form1(void);
 
 	protected:
 		/// <summary>
@@ -39,6 +35,8 @@ namespace FFAB_IntervalCalc {
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::Button^  button1;
 	private: System::ComponentModel::IContainer^  components;
+	private: array<FLASHTICK^> ^flashTicks;
+			 
 	protected: 
 
 	private:
