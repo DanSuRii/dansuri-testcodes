@@ -9,7 +9,6 @@ namespace FFAB_IntervalCalc {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	ref struct FLASHTICK;
 
 	/// <summary>
 	/// Form1에 대한 요약입니다.
@@ -35,7 +34,6 @@ namespace FFAB_IntervalCalc {
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::Button^  button1;
 	private: System::ComponentModel::IContainer^  components;
-	private: array<FLASHTICK^> ^flashTicks;
 			 
 	protected: 
 
@@ -95,11 +93,16 @@ namespace FFAB_IntervalCalc {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(7, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->AutoSize = true;
 			this->ClientSize = System::Drawing::Size(422, 142);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->dateTimePicker1);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::Fixed3D;
+			this->MaximizeBox = false;
+			this->MinimizeBox = false;
 			this->Name = L"Form1";
+			this->SizeGripStyle = System::Windows::Forms::SizeGripStyle::Hide;
 			this->Text = L"Form1";
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -108,6 +111,9 @@ namespace FFAB_IntervalCalc {
 #pragma endregion
 	private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e);
+
+	//ref struct FFAB_IntervalCalc::FLASHTICK;
+	private: array<ref struct FLASHTICK^> ^flashTicks;
 	};
 }
 
