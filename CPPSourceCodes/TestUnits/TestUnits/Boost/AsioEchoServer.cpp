@@ -18,6 +18,8 @@
 
 #include <process.h>
 
+#include "GFPackets.h"
+
 DECL_TESTUNIT(AsioEchoServer);
 
 using boost::asio::ip::tcp;
@@ -76,15 +78,47 @@ private:
 	void handle_read(const boost::system::error_code& error,
 		size_t bytes_transferred)
 	{
+		char buffer[1024];
+		size_t packetSize;
+		switch(bytes_transferred)
+		{
+		case GAMEFLIER_PACKETS::Packets<'c'>::size:
+			{
+				auto myPacket = (GAMEFLIER_PACKETS::Packets<'c'>::type*)data_;
+				auto response = new(buffer) GAMEFLIER_PACKETS::Response;
+				packetSize = sizeof(*response);
+				response->sessionkey = myPacket->sessionkey;
+				response->head[0] = 's';
+				response->result = GAMEFLIER_PACKETS::MIDDLELOGINRESULT_SUCCEED;
+				//strcpy_s( response->reason , myPacket-> )
+			}
+			break;
+
+		case GAMEFLIER_PACKETS::Packets<0x0E01>::size:
+			{
+				auto myPacket = (GAMEFLIER_PACKETS::Packets<0x0E01>::type*)data_;
+				auto response = new(buffer) GAMEFLIER_PACKETS::LoginResult;
+				packetSize = sizeof(*response);
+				strcpy_s(response->userName , myPacket->username);
+				response->resultValue = GAMEFLIER_PACKETS::MIDDLELOGINRESULT_SUCCEED;
+			}
+			break;
+		default:
+			return ;
+		}
+
+/*
 		Request* ptrRequest = (Request*)data_;
 
 		Response rs;
 		rs.sessionkey = ptrRequest->sessionkey;
+*/
 		if (!error)
 		{
 			boost::asio::async_write(socket_,
 				//boost::asio::buffer(data_, bytes_transferred),
-				boost::asio::buffer(&rs, sizeof(rs)),
+				//boost::asio::buffer(&rs, sizeof(rs)),
+				boost::asio::buffer(buffer, packetSize),
 				boost::bind(&session::handle_write, this,
 				boost::asio::placeholders::error));
 		}
@@ -152,6 +186,9 @@ private:
 	tcp::acceptor acceptor_;
 };
 
+boost::asio::io_service* ptrIOServeice = NULL;
+
+
 static void WorkerThread( void* ptrIoService )
 {
 	enum{
@@ -172,6 +209,7 @@ static void WorkerThread( void* ptrIoService )
 			/*g_Status = STATUS_END;
 			CIoServiceRepo::GetInstance().stop();*/
 			ioService.stop();
+			if(ptrIOServeice) ptrIOServeice->stop();
 			curState = STATE_STOP;
 			break;
 		}
@@ -183,10 +221,23 @@ static void WorkerThread( void* ptrIoService )
 }
 
 
+unsigned int __stdcall PLSSThread(void *)
+{
+	boost::asio::io_service io_service;
+	server s(io_service, 33000);
+
+	ptrIOServeice = &io_service;
+
+	io_service.run();
+
+	return 0;
+}
+
 void AsioEchoServer::DoExecute()
 {
 	int argc = 2;
 	char* argv[2] = {"", "5063"};
+	HANDLE hPlssThread;
 	try
 	{
 		if (argc != 2)
@@ -201,8 +252,10 @@ void AsioEchoServer::DoExecute()
 		server s(io_service, atoi(argv[1]));
 		
 		_beginthread( WorkerThread, 0, &io_service );
+		hPlssThread = reinterpret_cast<HANDLE>(_beginthreadex( 0, 0, PLSSThread, NULL, 0, 0 ));
 
 		io_service.run();
+		WaitForSingleObject( hPlssThread, INFINITE );
 	}
 	catch (std::exception& e)
 	{

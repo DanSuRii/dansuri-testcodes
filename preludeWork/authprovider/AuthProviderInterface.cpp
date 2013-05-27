@@ -7,7 +7,8 @@ namespace NS_AUTHNET
 	AuthSock::AuthSock( char* szAddress )
 		:hSocket(INVALID_SOCKET),
 		hEvent(WSACreateEvent()),
-		iSendBufferOffset(0)
+		iSendBufferOffset(0),
+		csSendBufferLock(TRUE)
 	{
 		int nAddressLen = sizeof(Address);
 		ASSERTV_RETURN(WSAStringToAddressA( szAddress, AF_INET, 0, (LPSOCKADDR)&Address, &nAddressLen ) == 0,
@@ -81,7 +82,7 @@ namespace NS_AUTHNET
 
 		while( !SendBufferQueue.empty() )
 		{
-			//CSAutoLock lock(&csSendBufferLock);
+			CSAutoLock lock(&csSendBufferLock);
 
 			const char* pSendBuffer = reinterpret_cast<const char*>(SendBufferQueue.front().first) + iSendBufferOffset;
 			int iSendSize = SendBufferQueue.front().second - iSendBufferOffset;
@@ -118,7 +119,7 @@ namespace NS_AUTHNET
 
 		int iBytesSent = 0;
 		{
-			//CSAutoLock lock(&csSendBufferLock);
+			CSAutoLock lock(&csSendBufferLock);
 			if(SendBufferQueue.empty())
 			{
 				iBytesSent = SendFromBuffer( pData, newDataSize );
@@ -146,7 +147,7 @@ namespace NS_AUTHNET
 		//ASSERT_RETURN(IsState(state_not_connected));
 
 		{
-			//CSAutoLock lock(&csSendBufferLock);
+			CSAutoLock lock(&csSendBufferLock);
 			while(!SendBufferQueue.empty())
 			{
 				MEMORYPOOL_DELETE(pMemoryPool, SendBufferQueue.front().first);

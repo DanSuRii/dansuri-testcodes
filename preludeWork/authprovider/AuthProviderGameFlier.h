@@ -6,9 +6,43 @@
 
 namespace NS_AUTHPROVIDERGF
 {	
+	//하나의 세션이라는 것은 ID를 가지고 있고 또한 현재의 상태를 가지고 있는 것을 말한다.
+
+	enum eSessionStep
+	{
+		SESSIONSTEP_MIDDLEWARE,
+		SESSIONSTEP_PLSS
+	};
+	
+	struct Session
+	{
+		unsigned int	worldID;		//나중에 쓸일 있을지 모르니까 일단 추가.
+		std::string		account_id;
+		time_t			lastActionTime;
+		SERVICEUSERID	sUid;
+		eSessionStep	sessionStep;
+		
+		Session(eSessionStep step):sessionStep(step){}
+	};
+
 	class SessionManager
 	{
+		typedef map_mp< SERVICEUSERID, Session >::type SessionMap;
+		SessionMap sessionMap;
+		CCriticalSection csSessionLock;
 
+		typedef map_mp< std::string, Session >::type	PlssSessionMap;
+		PlssSessionMap	plssSessionMap;
+		CCriticalSection csPlssSessionLock;
+		
+		SessionMap::iterator FindSession(SERVICEUSERID);
+
+	public:
+		SessionManager():csSessionLock(TRUE), csPlssSessionLock(TRUE){}
+		//toPop의 SessionStep에다가 원하는 session스탭을 넣고 pop해야됨. 
+		bool		PopSession( SERVICEUSERID sessionkey, Session& toPop );
+		bool		PopPlssSession( std::string& strToGet, Session& toPop );
+		bool		PushPlssSession( std::string& strToSet, Session& toSet );
 	};
 
 
@@ -76,6 +110,12 @@ protected:
 		void		SetState( state aState );
 		state		GetState();
 		bool		IsState( state aState );
+
+		template< class REQ >
+		bool		SendMsg( REQ& req )
+		{
+			return sockInterface.SendMsg(&req);
+		}
 	};
 
 	struct NetcomInitializer
@@ -146,6 +186,8 @@ protected:
 		NetComManager(NetcomInitializers&);
 
 		void ProcessSocketEvents();
+		template<class T>
+		bool SendTo(NetCommunicator::eCommunicators, T& );
 
 	};
 
@@ -158,18 +200,33 @@ protected:
 		
 		NS_AUTHNET::ThreadManager threadManager;
 		//NS_AUTHNET::AuthSock	authSocket;		
+		bool PlssRequestLogin( Session& aSession );
+
+		enum state {
+			state_idle,
+			state_working,
+			state_terminate
+		}			myState;
 
 	public:
 		AuthProviderGF(NetcomInitializers&);
 		~AuthProviderGF();
-		void RequestLogin();
 		void DoWork();
 		template<class T> void Handler(T&);
 
-	};
+		//typedef ConcreateLoginStruct2<ClientContext,MSG_LOGIN_CCMD_LOGIN_AUTH> LoginStruc;
+		typedef ConcreateLoginStruct2<int, int> LoginStruc;
+		virtual void RequestLogin(const LoginRequestStruc&);
 
-	
+	};	
 
 }
+
+template<>
+class MyProvider<APT_GAMEFLIER>
+{
+public:
+	typedef NS_AUTHPROVIDERGF::AuthProviderGF type;
+};
 
 #endif // __AUTHPROVIDERGAMEFLIER_H__

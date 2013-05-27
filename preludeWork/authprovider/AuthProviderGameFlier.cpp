@@ -38,7 +38,7 @@ namespace GAMEFLIER_PACKETS
 	template<int code>
 	class Packets;
 
-	//middle ware packets
+	//middleware packets
 	struct GF_Header
 	{
 		char head[1];
@@ -128,6 +128,8 @@ namespace GAMEFLIER_PACKETS
 #pragma pack(pop)
 //Packets end
 
+
+
 struct NS_AUTHNET::AuthSock::SMsgBuffer
 {
 	char* RawMsg(void) { return &Buffer; }
@@ -144,16 +146,120 @@ struct NS_AUTHNET::AuthSock::SMsgBuffer
 	};
 };
 
-template<>
-void NS_AUTHPROVIDERGF::AuthProviderGF::Handler<GAMEFLIER_PACKETS::Response>(
-	GAMEFLIER_PACKETS::Response& response )
+template<size_t sz>
+bool IsNullterminated( const char (&targetChar)[sz] )
 {
-	switch(response.result)
+	const char* pCur = &targetChar[sz-1];
+	do
 	{
+		if(*pCur == '\0') return true;
+	}while((pCur--) != targetChar );
 
-	}
+	return false;
 }
 
+template<>
+void NS_AUTHPROVIDERGF::AuthProviderGF::Handler(
+	GAMEFLIER_PACKETS::Response& response )
+{
+	enum{
+		AUTH_RESULT_SUCCEED = 1,
+		AUTH_RESULT_INVALID_IP = -19,
+		AUTH_RESULT_TIMEOUT = -21,
+		AUTH_RESULT_INVALID_TOKEN = -23,
+		AUTH_RESULT_OTHER_ERR = -99
+	};
+
+	std::string strSessionAcct("NULL");
+	std::string strReason( response.reason, _countof(response.reason));
+	
+	//포인터를 가지고 조작하면 안된다. 유효성이 보장이 되지 않음.
+	Session aSession(SESSIONSTEP_MIDDLEWARE);
+	ASSERT_RETURN(sessionManager.PopSession( response.sessionkey, aSession));
+
+	/*
+	// 해당 스탭인 세션만 꺼내오도록 하는 조작이 필요하다.
+	ASSERT_RETURN(aSession.IsStep( step_middleware ));
+	*/
+
+
+	ULONG billingResult = (ULONG)~BILLING_OK;
+	//bool acctCompareResult = (strSessionAcct.compare( strReason ) == 0);
+	//위의 함수는 내부적으로 memcmp를 호출하는데, 지정 할당 string간의 compare결과가 올바르지 않는 문제가 있다.
+	bool acctCompareResult = (PStrCmp( strSessionAcct.c_str(), strReason.c_str() ) == 0);
+
+	if( (response.result == AUTH_RESULT_SUCCEED) && (true == acctCompareResult) )
+	{
+		billingResult = BILLING_OK;
+
+		//추후 실패 했을 때 현재 세션에 어떻게 처리할지 부분 까지 넣도록 한다.
+		PlssRequestLogin(aSession);
+	}
+	else
+	{
+		TraceError("AuthProviderGameFlier: Login Request Failed With Result (%d), Reason(%s), AcctID(%s), Session(%I64d)",
+			response.result,
+			strReason.c_str(),
+			strSessionAcct.c_str(),
+			response.sessionkey);
+/*
+	LoginServer::LoginAuthResponseHandler( pMsg->sessionkey, billingResult 
+#if defined(_SHUTDOWN_LAW)
+		,0
+#endif
+#if defined(_SELECTABLE_SHUTDOWN)
+		,0
+#endif
+		);
+*/
+	}
+
+
+	//이 단계에서는 실패했으면 AuthResponseHandler를 불러주고,
+	//성공했으면 session을 다시 집어넣고 다음 단계를 밟도록 한다.
+/*
+	LoginServer::LoginAuthResponseHandler( pMsg->sessionkey, billingResult 
+#if defined(_SHUTDOWN_LAW)
+		,0
+#endif
+#if defined(_SELECTABLE_SHUTDOWN)
+		,0
+#endif
+		);
+*/
+
+}
+
+
+template<>
+void NS_AUTHPROVIDERGF::AuthProviderGF::Handler(
+	GAMEFLIER_PACKETS::LoginResult& response )
+{
+	ULONG billingResult = (ULONG)~BILLING_OK;
+
+	ASSERT_RETURN(IsNullterminated(response.userName));
+
+	Session aSession( SESSIONSTEP_PLSS );
+	ASSERT_RETURN(sessionManager.PopPlssSession( std::string(response.userName) , aSession ));
+
+	
+	if( GAMEFLIER_PACKETS::PLSSLOGINRESULT_ALLOW_LOGIN == response.resultValue)
+	{
+		billingResult = BILLING_OK;
+	}	
+
+/*
+	LoginServer::LoginAuthResponseHandler( aSession.sUid, billingResult 
+#if defined(_SHUTDOWN_LAW)
+		,0
+#endif
+#if defined(_SELECTABLE_SHUTDOWN)
+		,0
+#endif
+		);
+*/
+
+}
 
 
 namespace NS_AUTHPROVIDERGF
@@ -161,6 +267,17 @@ namespace NS_AUTHPROVIDERGF
 	NetCommunicator* NetComManager::communicators[NetCommunicator::COMMUNICATORS_CNT] = {NULL,};
 	WSAEVENT NetComManager::wsaEvents[NetCommunicator::COMMUNICATORS_CNT] = {WSA_INVALID_EVENT, };
 
+
+	NetcomInitializers& NetcomInitializers::setAuthProvider( AuthProviderGF* pAuthProvider )
+	{
+		std::for_each( info, info + _countof(info),
+			[&pAuthProvider](NetcomInitializer& initializer)
+		{
+			initializer.pAuthProvider = pAuthProvider;
+		});
+
+		return *this;
+	}
 
 
 	NetCommunicator::NetCommunicator( NetcomInitializer& initStruc  )
@@ -367,7 +484,17 @@ namespace NS_AUTHPROVIDERGF
 
 	void PLSSServerCommunicator::RecvAndProcMsg()
 	{
-		throw std::exception("The method or operation is not implemented.");
+		ASSERT_RETURN(sockInterface.IsReadbufferValid());
+		while (RecvNextMsg())
+		{
+			switch( GetReadBuffer()->plssHeader.packet_type )
+			{
+			case 0xD601:
+				GAMEFLIER_PACKETS::Packets<0xD601>::type* pPacket;
+				GetReadBuffer()->CastRawMsg( pPacket );
+				this->pAuthProvider->Handler( *pPacket );
+			}
+		}
 	}
 
 	bool PLSSServerCommunicator::RecvNextMsg()
@@ -489,22 +616,35 @@ namespace NS_AUTHPROVIDERGF
 			//2005에서는 수정해야 할 꺼임 ㅡ ㅜ;
 	}
 
+	template<class T>
+	bool NetComManager::SendTo( NetCommunicator::eCommunicators eCommunicator, T& req )
+	{
+		ASSERT_RETFALSE(eCommunicator > 0 && eCommunicator < NetCommunicator::COMMUNICATORS_CNT );
+		return communicators[eCommunicator]->SendMsg(req);
+	}
 
 
+
+	//생성자에서 this포인터를 넘기는 C4355 warning
+	//일반적으로 사용 하지 않는 표현식이다. this포인터가 아직 초기화 되지 않았기 떄문에 개체의 맴버 변수/함수에 접근 할 수 없다.
+	//다만 단순 포인터를 보관하기 위한 용도라면, 가능한 표현식이다. ( 즉, 용례가 제한적이고 위험성을 내포하고 있으므로 warning이다. )
+	//기타로, 상속관계를 hard하게 활용하는 경우나 pointer를 hash해서 사용 할 생각이라면 결코 이렇게 사용하지 않도록 한다.
 	AuthProviderGF::AuthProviderGF(NetcomInitializers& initStruc)
 		:communicator(initStruc.setAuthProvider(this))
 	{
 		threadManager.doCreateThread(*this);
-
+		myState = state_working;
 	}
 
-	void AuthProviderGF::RequestLogin()
+	void AuthProviderGF::RequestLogin(const LoginRequestStruc& req)
 	{
-
+		const LoginStruc* myReq = dynamic_cast<const LoginStruc*>(&req);
+		ASSERT_RETURN(myReq);
 	}
 
 	AuthProviderGF::~AuthProviderGF()
 	{
+		myState = state_terminate;
 		threadManager.WaitForTerminate();
 	}
 
@@ -512,21 +652,80 @@ namespace NS_AUTHPROVIDERGF
 	void AuthProviderGF::DoWork()
 	{
 		//communicator->wsaEvents;
+		while( myState != state_terminate )
+		{
+			this->communicator.ProcessSocketEvents();
 
-		this->communicator.ProcessSocketEvents();
+			//this->sessionManager
+
+			//종료 조건 스테이트 IsState(state_terminate) break;
+		}
 
 	}
 
-
-	NetcomInitializers& NetcomInitializers::setAuthProvider( AuthProviderGF* pAuthProvider )
+	bool AuthProviderGF::PlssRequestLogin( Session& aSession )
 	{
-		std::for_each( info, info + _countof(info),
-			[&pAuthProvider](NetcomInitializer& initializer)
-		{
-			initializer.pAuthProvider = pAuthProvider;
-		});
+		GAMEFLIER_PACKETS::Login loginRequest;
+		strcpy_s(loginRequest.username, aSession.account_id.c_str());
+		
+		time_t curTime;
+		time(&curTime);
+		tm curTM;
+		localtime_s( &curTM, &curTime );
+		
+		strftime( loginRequest.loginTime, _countof(loginRequest.loginTime),
+			"%Y/%m/%d %H:%M:%S", &curTM);
 
-		return *this;
+		loginRequest.worldID = aSession.worldID;
+
+		ASSERT_RETFALSE(this->communicator.SendTo( NetCommunicator::PLSS, loginRequest ));
+		ASSERT_RETFALSE(this->sessionManager.PushPlssSession( std::string( aSession.account_id ), aSession ));
+
+		return true;
+	}
+
+
+	bool SessionManager::PopSession( SERVICEUSERID sessionkey, Session& toPop )
+	{
+		CSAutoLock lock(&csSessionLock);
+		SessionMap::iterator iter = FindSession(sessionkey);
+		ASSERT_RETFALSE(iter != sessionMap.end());
+		//아래는 무효(X)
+		//세션 스탭이 같지 않은 세션에 대한 요청은 분명히 assert 요건이 맞다.
+		//다만, step plss까지 갔었던 session이 clear되지 않고 step middlware 로 다시 들어 왔을 때에는 어떤 필터링을 할 것인지에 대한
+		//충분한 고민이 있어야 한다.
+		//ASSERT_RETFALSE(toPop.sessionStep == iter->second.sessionStep);
+		toPop = iter->second;
+
+		sessionMap.erase(iter);
+
+		return true;
+	}
+
+	SessionManager::SessionMap::iterator SessionManager::FindSession( SERVICEUSERID sessionkey )
+	{
+		SessionMap::iterator iter = sessionMap.find( sessionkey );
+		return iter;
+	}
+
+	bool SessionManager::PopPlssSession( std::string& strToGet, Session& toPop )
+	{
+		CSAutoLock lock(&csPlssSessionLock);
+		PlssSessionMap::iterator iter = this->plssSessionMap.find( strToGet );
+		ASSERT_RETFALSE(iter != plssSessionMap.end());
+
+		toPop = iter->second;
+
+		plssSessionMap.erase(iter);
+
+		return true;
+	}
+
+	bool SessionManager::PushPlssSession( std::string& strToSet, Session& toSet )
+	{
+		CSAutoLock lock(&csPlssSessionLock);
+		
+		return plssSessionMap.insert( std::make_pair( strToSet, toSet ) ).second;
 	}
 
 }

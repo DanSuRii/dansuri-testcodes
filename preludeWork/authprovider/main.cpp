@@ -11,5 +11,7 @@ void main(void)
 	NS_AUTHPROVIDERGF::NetcomInitializers initStruc(pszAddress);
 	NS_AUTHPROVIDERGF::AuthProviderGF instance(initStruc);
 
+	int members[] = {1, 2};
+	instance.RequestLogin( makeLoginRequest<APT_GAMEFLIER>( &members[0], &members[1] ) );
 	//WSAEventSelect();
 }

@@ -36,6 +36,9 @@
     <ClInclude Include="..\TestUnits\Boost\chat_message.hpp">
       <Filter>소스 파일\Boost</Filter>
     </ClInclude>
+    <ClInclude Include="..\TestUnits\Boost\GFPackets.h">
+      <Filter>소스 파일\Boost</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TestUnits\TestUnitRepository.cpp">
@@ -80,11 +83,32 @@
     <ClCompile Include="..\TestUnits\Boost\AsioChatServer.cpp">
       <Filter>소스 파일\Boost</Filter>
     </ClCompile>
-    <ClCompile Include="..\TestUnits\sizeWrapper.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\TestUnits\Boost\AsioEchoServer.cpp">
       <Filter>소스 파일\Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\countof.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\lambda.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\stringTest.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\nullterm.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\exportableMap.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\shutdownTest.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\arrayType.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TestUnits\NetOrdering.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

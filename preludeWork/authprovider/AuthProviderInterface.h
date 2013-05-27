@@ -18,7 +18,7 @@ namespace NS_AUTHNET
 		int iSendBufferOffset;
 
 		SMsgBuffer* pReadBuffer;
-
+		CCriticalSection csSendBufferLock;
 		int SendFromBuffer( const char* szBuffer, int iBufferSize );
 
 
@@ -81,9 +81,76 @@ namespace NS_AUTHNET
 
 }
 
+enum AuthProviderTypes
+{
+	APT_GAMEFLIER
+};
+
 interface AuthProvider
 {
-	virtual void RequestLogin() = 0;
+	class LoginRequestStruc{
+	public:
+		virtual ~LoginRequestStruc(){;}
+	};
+
+	enum eErrCode
+	{
+		err_none,
+		err_invalid_parameter
+	};
+
+	//const여야 하는 이유는 MEC++ p.158 에 설명되어있다. 임시객체를 사용하기 위해서 필수불가결한 요소.
+	virtual void RequestLogin(const LoginRequestStruc& ) = 0;
+
+	
+	/*
+	template<class member1, class member2>
+	struct ConcreateLoginStruct : public LoginRequestStruc
+
+	맴버가 더 많이 필요한 login request가 있으면 더 정의해서 쓰면 된다. 2개 / 3개 버전은 미리 만들어 둠.
+	*/
+
+	template<class member1, class member2>
+	struct ConcreateLoginStruct2 : public LoginRequestStruc
+	{
+		member1*	ptrMember1;
+		member2*	ptrMember2;
+
+		ConcreateLoginStruct2(member1* pmbr1, member2* pmbr2)
+			: ptrMember1(pmbr1), ptrMember2(pmbr2)
+		{
+		}
+	};
+
+	template<class member1, class member2, class member3>
+	struct ConcreateLoginStruct3 : public LoginRequestStruc
+	{
+		member1*	ptrMember1;
+		member2*	ptrMember2;
+		member3*	ptrMember3;
+
+		ConcreateLoginStruct3(member1* pmbr1, member2* pmbr2, member3* pmbr3)
+			: ptrMember1(pmbr1), ptrMember2(pmbr2), ptrMember3(pmbr3)
+		{
+		}
+	};
+
+
 };
+
+template<AuthProviderTypes> class MyProvider;
+
+template<class BaseClass, class member1, class member2>
+typename BaseClass::LoginStruc makeLoginRequest(member1* ptrMember1, member2* ptrMember2)
+{	
+	return BaseClass::LoginStruc(ptrMember1, ptrMember2);
+}
+
+template<AuthProviderTypes providerType, class member1, class member2>
+typename MyProvider<providerType>::type::LoginStruc makeLoginRequest(member1* ptrMember1, member2* ptrMember2)
+{
+	return makeLoginRequest< MyProvider<providerType>::type >(ptrMember1, ptrMember2);
+}
+
 
 #endif // __AUTHPROVIDERINTERFACE_H__

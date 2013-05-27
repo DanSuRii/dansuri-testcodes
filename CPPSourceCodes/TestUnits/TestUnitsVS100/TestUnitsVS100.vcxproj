@@ -78,23 +78,29 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\TestUnits\Boost\chat_message.hpp" />
+    <ClInclude Include="..\TestUnits\Boost\GFPackets.h" />
     <ClInclude Include="..\TestUnits\critsect.h" />
     <ClInclude Include="..\TestUnits\RegisterUnit.h" />
     <ClInclude Include="..\TestUnits\stdafx.h" />
     <ClInclude Include="..\TestUnits\TestUnitRepository.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\TestUnits\arrayType.cpp" />
     <ClCompile Include="..\TestUnits\AsioTest.cpp" />
     <ClCompile Include="..\TestUnits\Boost\AsioChatServer.cpp" />
     <ClCompile Include="..\TestUnits\Boost\AsioEchoServer.cpp" />
     <ClCompile Include="..\TestUnits\countof.cpp" />
     <ClCompile Include="..\TestUnits\DataRepositoryTemplate.cpp" />
+    <ClCompile Include="..\TestUnits\exportableMap.cpp" />
     <ClCompile Include="..\TestUnits\filelineArgPass.cpp" />
     <ClCompile Include="..\TestUnits\foreachtest.cpp" />
     <ClCompile Include="..\TestUnits\lambda.cpp" />
     <ClCompile Include="..\TestUnits\listToArr.cpp" />
     <ClCompile Include="..\TestUnits\main.cpp" />
+    <ClCompile Include="..\TestUnits\NetOrdering.cpp" />
+    <ClCompile Include="..\TestUnits\nullterm.cpp" />
     <ClCompile Include="..\TestUnits\ReadWriteLockTest.cpp" />
+    <ClCompile Include="..\TestUnits\shutdownTest.cpp" />
     <ClCompile Include="..\TestUnits\STDCopy.cpp" />
     <ClCompile Include="..\TestUnits\stringTest.cpp" />
     <ClCompile Include="..\TestUnits\strPTimeTest.cpp" />

@@ -35,6 +35,8 @@ void MemoryInsert(int* ptrWhere)
 void ArrSizeOf::DoExecute()
 {
 
+
+
 	int MyItems[324];
 	std::cout << arrCntOf(MyItems) << std::endl;
 	int myItemsDuel[ 2 * arrCntOf(MyItems) ];
