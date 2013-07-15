@@ -42,7 +42,9 @@ void ArrSizeOf::DoExecute()
 	int myItemsDuel[ 2 * arrCntOf(MyItems) ];
 	std::cout << arrCntOf(myItemsDuel) << std::endl;
 
-	arrCntOfCls( MyItems );
+	//_ArraySizeHelper(MyItems);
+
+	std::cout << arrCntOfCls( MyItems ) << std::endl;
 
 	MemoryInsert(2 +MyItems);
 

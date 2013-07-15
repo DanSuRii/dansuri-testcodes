@@ -56,9 +56,11 @@ void netOrdering::DoExecute()
 
 	packetReorder::toNet(myValShort);
 
+/*
 	__int64 myVal64bit = 0x010304902;
 	
 	packetReorder::toNet(myVal64bit);
+*/
 
 	return ;
 }
