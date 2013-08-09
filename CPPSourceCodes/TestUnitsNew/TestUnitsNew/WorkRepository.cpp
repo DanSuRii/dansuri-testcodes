@@ -24,9 +24,9 @@ void WorkRepository::PrintMenu()
 	std::for_each( pWorks, pWorks + _countof(pWorks), 
 		[&boundCount](WorkBase* pWork)
 		{
+			std::cout << boundCount << "." << pWork->GetMyName();
+			
 			++boundCount;
-
-			std::cout << pWork->GetMyName();
 
 			if(0 == boundCount % 3)
 			{
@@ -34,12 +34,23 @@ void WorkRepository::PrintMenu()
 			}
 			else
 			{
-				std::cout.width(10);
+				std::cout.width(20);
 			}
 		}
 	);
 
-	std::cout << std::endl;
+	std::cout << std::endl << "Select Menu(q to Exit): ";
+}
+
+WorkBase* WorkRepository::GetWork(int idx)
+{
+	WorkBase* pRet = nullptr;
+	
+	if( (0 <= idx )
+		&& (idx < _countof(pWorks)) )
+		pRet = pWorks[idx];
+
+	return pRet;
 }
 
 bool WorkRepository::MenuSelect()
@@ -49,8 +60,19 @@ bool WorkRepository::MenuSelect()
 
 	std::cin >> selectKey;
 
+	selectKey[ _countof(selectKey)-1 ] = '\0';
 
+	if('q' == selectKey[0])
+		bReturnRepeat = false;
+	else
+	{
+		int aSelected = atoi( selectKey );
+		WorkBase* pWork = GetWork(aSelected);
+		if(pWork)
+			pWork->DoWork();
+	}
 
+	std::cout << std::endl;
 	return bReturnRepeat;
 }
 void WorkRepository::DoLoop()

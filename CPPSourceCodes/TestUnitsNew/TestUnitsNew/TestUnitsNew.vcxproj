@@ -75,13 +75,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="exponentiationTpl.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="test.c" />
+    <ClCompile Include="vectorPqueuePerformance.cpp" />
     <ClCompile Include="WorkRepository.cpp" />
     <ClCompile Include="workTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="test.h" />
+    <ClInclude Include="test_r.h" />
     <ClInclude Include="Work.h" />
     <ClInclude Include="WorksBase.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xsd Include="PerfCounterTest.xsd">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </Xsd>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="test.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

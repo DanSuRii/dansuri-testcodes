@@ -42,13 +42,14 @@ class WorkRepository
 
 	void PrintMenu();
 	bool MenuSelect();
+	WorkBase* GetWork(int idx);
 
 public:
 	
 	static WorkRepository& GetInstance(){ static WorkRepository _Instance; return _Instance; }
 
 	void DoLoop();	
-	
+
 };
 
 

@@ -1,11 +1,17 @@
 #include <cstdlib>
 #include "Work.h"
 
+#include "test.h"
+
 int main(void)
 {
+	//PerfAutoInitialize();
+
 	WorkRepository::GetInstance().DoLoop();
 
-	system("pause");
+	//PerfAutoCleanup();
 	
+	system("pause");
+
 	return 0;
 }
