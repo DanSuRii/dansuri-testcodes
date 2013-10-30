@@ -75,14 +75,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="boostDateTime.cpp" />
+    <ClCompile Include="boostFormat.cpp" />
+    <ClCompile Include="boostSmartPointers.cpp" />
+    <ClCompile Include="bytebuffer.cpp" />
+    <ClCompile Include="classMemberDebugPinter.cpp" />
     <ClCompile Include="exponentiationTpl.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NulltermChecker.cpp" />
+    <ClCompile Include="packetVersionComparsion.cpp" />
     <ClCompile Include="test.c" />
+    <ClCompile Include="testInheritCall.cpp" />
     <ClCompile Include="vectorPqueuePerformance.cpp" />
     <ClCompile Include="WorkRepository.cpp" />
     <ClCompile Include="workTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="NulltermChecker.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="test_r.h" />
     <ClInclude Include="Work.h" />

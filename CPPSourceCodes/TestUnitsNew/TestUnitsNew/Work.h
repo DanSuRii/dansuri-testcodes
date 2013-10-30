@@ -1,6 +1,11 @@
 #ifndef __WORK_H__
 #define __WORK_H__
 
+#define			_MAKESTR(S)							# S
+#define			MAKESTRING(S)						_MAKESTR(S)
+#define			__FILE__LINE__						__FILE__ "(" MAKESTRING(__LINE__) ") : "
+#define			NOTE(x)								message(__FILE__LINE__" NOTE-----------------------> : " x "\n")
+
 #define REGISTER_WORKS(x) x,
 enum eWorks
 {
@@ -28,18 +33,13 @@ public:
 	WorkImpl(char* pName):myName(pName){}
 };
 
-#define REGISTER_WORKS(x) static WorkImpl<x> x##Instance(#x); pWorks[x] = &x##Instance;
 
 
 class WorkRepository
 {
 	WorkBase* pWorks[eWorks_CNT];
 
-	WorkRepository()
-	{
-#include "WorksBase.h"
-	}
-
+	WorkRepository();
 	void PrintMenu();
 	bool MenuSelect();
 	WorkBase* GetWork(int idx);

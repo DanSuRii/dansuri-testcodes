@@ -1,7 +1,17 @@
+#include <sstream>
+#include <iomanip>
 #include <iostream>
 #include <algorithm>
 
 #include "Work.h"
+
+#define REGISTER_WORKS(x) static WorkImpl<x> x##Instance(#x); pWorks[x] = &x##Instance;
+
+WorkRepository::WorkRepository()
+{
+#include "WorksBase.h"
+}
+
 
 void WorkRepository::PrintMenu()
 {
@@ -24,7 +34,11 @@ void WorkRepository::PrintMenu()
 	std::for_each( pWorks, pWorks + _countof(pWorks), 
 		[&boundCount](WorkBase* pWork)
 		{
-			std::cout << boundCount << "." << pWork->GetMyName();
+			std::cout << std::left;
+			std::cout <<  std::setw(25);
+			std::stringstream ssLine;
+			ssLine << "жн" << boundCount << "." << pWork->GetMyName();
+			std::cout <<  ssLine.str().substr(0, 23);
 			
 			++boundCount;
 
