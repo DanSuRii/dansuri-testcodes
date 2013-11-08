@@ -75,6 +75,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BLOBAgent.cpp" />
     <ClCompile Include="boostDateTime.cpp" />
     <ClCompile Include="boostFormat.cpp" />
     <ClCompile Include="boostSmartPointers.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="workTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BLOBAgentDataForm.h" />
     <ClInclude Include="NulltermChecker.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="test_r.h" />

@@ -5,7 +5,8 @@
 
 enum eDegreeOfDifficult
 {
-	eDegreeOfDifficult_Easy,
+	eDegreeOfDifficult_INVALID = -9,
+	eDegreeOfDifficult_Easy=0,
 	eDegreeOfDifficult_Normal,
 	eDegreeOfDifficult_Hard,
 	eDegreeOfDifficult_Expert,
@@ -137,4 +138,8 @@ void WorkImpl<bitBufferTest>::DoWork()
 
 	DIFFICULT_BITBUFF::STR_TYPE strBitFrom = {"101101"};
 	bitBuff.ImportFrom(strBitFrom);
+
+
+	size_t bufferIdx = (eDegreeOfDifficult_INVALID / 8);
+	size_t bitIdx = (eDegreeOfDifficult_INVALID % 8);
 }

@@ -9,6 +9,7 @@ _InIt NULLTERM_CHECKER::FindWrapper( _InIt _First, _InIt _Last, const _Ty& _Val 
 }
 
 
+
 void NULLTERM_CHECKER::Create()
 {
 	NULLTERM_CHECKER _INstance;
@@ -16,6 +17,8 @@ void NULLTERM_CHECKER::Create()
 	FindWrapper<char*, char>( myArr, myArr + _countof(myArr), 0 );
 	wchar_t SecondArr[10];
 	FindWrapper<wchar_t*, wchar_t>( SecondArr, SecondArr + _countof(SecondArr), 0x0000 );
+
+
 }
 
 

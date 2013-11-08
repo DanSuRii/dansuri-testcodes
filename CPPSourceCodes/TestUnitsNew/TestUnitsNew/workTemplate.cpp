@@ -122,6 +122,13 @@ void WorkImpl<nulltermSearch>::DoWork()
 	bSuccess = NULLTERM_CHECKER::NulltermCheck( secondNulltermAtEnd );
 	bSuccess = NULLTERM_CHECKER::NulltermCheck( thirdUnsafty );
 
+	char fArr[10], sArr[20];
+	NULLTERM_CHECKER::assign(fArr, sArr);
+
+	char MinusOne[] = {0xFF, 0XFF, 0XFF, 0X7F};
+	int nMinusOne = *((int*)MinusOne);
+
+
 }
 
 
@@ -317,4 +324,22 @@ void WorkImpl<fourCCLookup>::DoWork()
 
 	return ;
 
+}
+
+void CreateDynamicArgumentStmt(std::string& toRet, size_t sizeCnt)
+{
+	toRet.clear();
+	while(--sizeCnt)
+		toRet.append("?,");
+
+	toRet.append("?");
+}
+
+void WorkImpl<DynamicArgument>::DoWork()
+{
+	std::string strTemp;
+
+	CreateDynamicArgumentStmt( strTemp, 10);
+	CreateDynamicArgumentStmt( strTemp, 20);
+	CreateDynamicArgumentStmt( strTemp, 128);
 }

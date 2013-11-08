@@ -34,6 +34,17 @@ public:
 	{		
 		return NulltermCheckBase<wchar_t, _SizeOfArray, L'\0'>( myArray );
 	}
+
+
+	template< class ArrayTy, size_t szFArr, size_t szSArr >
+	static ArrayTy (&assign( ArrayTy (&lhs)[szFArr], ArrayTy (&rhs)[szSArr] ))[szFArr]
+	{
+		//strcpy_s( lhs, rhs );	
+		return lhs;	
+	}
+
 };  
+
+
 
 #endif // NULLTERMCHECKER_H__

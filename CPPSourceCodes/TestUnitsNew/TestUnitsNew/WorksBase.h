@@ -22,11 +22,13 @@ REGISTER_WORKS(boostFormat)
 REGISTER_WORKS(testAllOrNothing)
 REGISTER_WORKS(fourCCLookup)
 REGISTER_WORKS(bitBufferTest)
+REGISTER_WORKS(BLOBAgent)
+REGISTER_WORKS(DynamicArgument)
 
 
 #if 0
 
-void WorkImpl<bitBufferTest>::DoWork()
+void WorkImpl<DynamicArgument>::DoWork()
 {
 
 }
