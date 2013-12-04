@@ -15,7 +15,6 @@
 #include "boost/dynamic_bitset.hpp"
 
 
-
 void WorkImpl<workOne>::DoWork()
 {
 
@@ -342,4 +341,200 @@ void WorkImpl<DynamicArgument>::DoWork()
 	CreateDynamicArgumentStmt( strTemp, 10);
 	CreateDynamicArgumentStmt( strTemp, 20);
 	CreateDynamicArgumentStmt( strTemp, 128);
+	CreateDynamicArgumentStmt( strTemp, 64*3); //64(Array Size), 3(member count)
+
+	STARTUPINFOA startupInfo;
+	PROCESS_INFORMATION info;
+	ZeroMemory(&startupInfo, sizeof(startupInfo));
+	ZeroMemory(&info, sizeof(info));	
+	
+	DWORD dwErr;
+	char szWindowsDir[MAX_PATH];	
+	GetWindowsDirectoryA((LPSTR)&szWindowsDir, _countof(szWindowsDir));
+	strcat_s( szWindowsDir, "\\system32");
+	char* parameter = "cmd.exe /c @echo Duplicate Session & pause";
+
+
+	if( CreateProcessA( NULL, parameter, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, szWindowsDir, &startupInfo, &info ) )
+	{
+		// Wait till cmd do its job
+		//WaitForSingleObject( info.hProcess, INFINITE );
+		// Check whether our command succeeded?
+		//GetExitCodeProcess( info.hProcess, &dwErr );
+		// Avoid memory leak by closing process handle
+		CloseHandle( info.hProcess );
+	}
+	
 }
+
+template< class T >
+struct DebugAssignString
+{
+
+public:
+	void Byte3Operation(
+		std::string& pointStr,
+		size_t& idx,
+		std::string& toAssign,
+		size_t& assignIdx,
+		std::stringstream& resultStr
+		)
+	{
+		//2개를 쓰고 마지막 1개는 \0으로 해 준다.
+		char buffer[2];
+
+		size_t sizeToWrite = 0;
+		for each(char& pCur in buffer)
+		{
+			pCur = toAssign[idx++];
+			++sizeToWrite;
+			if(idx >= toAssign.length())
+				break;				
+		}
+
+		std::string strValue;
+		for( size_t bufferLen = _countof(buffer);
+			bufferLen > 0; --bufferLen)
+		{
+			char cCur = buffer[bufferLen-1];
+			if(cCur == 0) strValue += "\\0";
+			strValue += cCur;
+		}
+
+		resultStr << "(*((short*)&" << pointStr << "[" << assignIdx << "])='" << strValue << "')&";
+		assignIdx+=2;
+		resultStr << "(*((char*)&" << pointStr << "[" << assignIdx << "])='\\0')";
+		assignIdx+=1;
+	}
+
+	void operator()(
+		std::string& pointStr,
+		size_t lenOfPtr,
+		std::string& toAssign ,
+		std::stringstream& resultStr)
+	{
+		char buffer[4];
+		size_t idx = 0;
+		resultStr.clear();
+
+		size_t assignIdx = 0;
+		
+		while( idx < toAssign.length())
+		{
+			memset(buffer, 0, sizeof(buffer));
+			if(0 >= lenOfPtr)
+			{
+				break ;
+			}
+			
+			if(lenOfPtr == 3)
+			{
+				Byte3Operation(pointStr, idx, toAssign, assignIdx, resultStr);
+				break;
+			}
+			size_t sizeToWrite = 0;
+			for each(char& pCur in buffer)
+			{
+				pCur = toAssign[idx++];
+				++sizeToWrite;
+				if(idx >= toAssign.length())
+					break;				
+			}
+			
+
+			std::string strValue;
+			for( size_t bufferLen = _countof(buffer);
+				bufferLen > 0; --bufferLen)
+			{
+				char cCur = buffer[bufferLen-1];
+				if(cCur == 0) strValue += "\\0";
+				strValue += cCur;
+			}
+
+
+			std::string strTypeName;
+
+			switch(sizeToWrite)
+			{
+			case 1: strTypeName = "char";	break;
+			case 2: strTypeName = "short";	break;
+			default: strTypeName = "int";	break;
+			}
+			resultStr << "(*((" << strTypeName << "*)&" << pointStr << "[" << assignIdx << "])='" << strValue << "')";
+			switch(sizeToWrite)
+			{
+			case 1: assignIdx+=1;	break;
+			case 2: assignIdx+=2;	break;
+			default: assignIdx+=4;	break;
+			}
+			if(idx < toAssign.length())
+				resultStr << "&";
+			
+			lenOfPtr -=  sizeToWrite;
+
+		}
+	}
+};
+
+void WorkImpl<DbgAssignString>::DoWork()
+{
+	DebugAssignString<char> _Instance;
+	char m_szToCharName[16];
+	
+	std::stringstream ssResult;
+	_Instance(std::string("m_szToCharName"), _countof(m_szToCharName), std::string("My Name Is Dennies"), ssResult);
+
+	std::cout << ssResult.str() << std::endl;
+}
+
+
+struct StaticMember
+{
+	StaticMember()
+	{
+
+	}
+
+	int GetNum(){return 5;}
+};
+
+struct Foo
+{
+
+	static StaticMember aMember;	
+};
+
+StaticMember Foo::aMember;
+
+void WorkImpl<staticTest>::DoWork()
+{
+	Foo _Instance;
+	_Instance.aMember;
+}
+
+
+/*
+toStr(ptr:string, size_t lenOfPtr, str:string)
+
+	char buffer[4];
+	idx
+
+
+while( idx < str.len() )
+{
+	buffer.clear();
+	for each(char* pCur, buffer)
+	{
+		pCur = str[idx++]
+		if( str.len() < idx )
+			break;
+	}
+
+	//(*((int*)m_szToCharName) = 'nned') 
+	result += "(*((int*)" + ptr + "["+ itoa(+=4) +]) = " + reverse(buffer) + ")"
+	if(idx < str.len())
+		result += "&"
+}
+
+*/
+

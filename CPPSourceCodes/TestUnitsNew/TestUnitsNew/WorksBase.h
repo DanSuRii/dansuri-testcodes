@@ -24,11 +24,17 @@ REGISTER_WORKS(fourCCLookup)
 REGISTER_WORKS(bitBufferTest)
 REGISTER_WORKS(BLOBAgent)
 REGISTER_WORKS(DynamicArgument)
-
+REGISTER_WORKS(testInherit)
+REGISTER_WORKS(MsgDispatcherWithBOOST)
+REGISTER_WORKS(Multicaster)
+REGISTER_WORKS(DbgAssignString)
+REGISTER_WORKS(staticTest)
+REGISTER_WORKS(statTraits)
+REGISTER_WORKS(IterateRegister)
 
 #if 0
 
-void WorkImpl<DynamicArgument>::DoWork()
+void WorkImpl<IterateRegister>::DoWork()
 {
 
 }

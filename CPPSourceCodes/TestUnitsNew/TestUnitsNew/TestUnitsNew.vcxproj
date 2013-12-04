@@ -82,14 +82,20 @@
     <ClCompile Include="bytebuffer.cpp" />
     <ClCompile Include="classMemberDebugPinter.cpp" />
     <ClCompile Include="exponentiationTpl.cpp" />
+    <ClCompile Include="IterateRegister.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MsgDispatcherWithBOOST.cpp" />
+    <ClCompile Include="Multicaster.cpp" />
     <ClCompile Include="NulltermChecker.cpp" />
     <ClCompile Include="packetVersionComparsion.cpp" />
+    <ClCompile Include="StatTraits.cpp" />
     <ClCompile Include="test.c" />
+    <ClCompile Include="testInherit.cpp" />
     <ClCompile Include="testInheritCall.cpp" />
     <ClCompile Include="vectorPqueuePerformance.cpp" />
     <ClCompile Include="WorkRepository.cpp" />
     <ClCompile Include="workTemplate.cpp" />
+    <ClCompile Include="ZoneMsgDispatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BLOBAgentDataForm.h" />
@@ -98,6 +104,7 @@
     <ClInclude Include="test_r.h" />
     <ClInclude Include="Work.h" />
     <ClInclude Include="WorksBase.h" />
+    <ClInclude Include="ZoneMsgDispatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <Xsd Include="PerfCounterTest.xsd">
