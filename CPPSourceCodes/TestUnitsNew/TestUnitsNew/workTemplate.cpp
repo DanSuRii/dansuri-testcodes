@@ -13,6 +13,8 @@
 #include "NulltermChecker.h"
 
 #include "boost/dynamic_bitset.hpp"
+#include <comdef.h>
+#include <string>
 
 
 void WorkImpl<workOne>::DoWork()
@@ -323,6 +325,12 @@ void WorkImpl<fourCCLookup>::DoWork()
 
 	return ;
 
+	/*
+	template<class T> const char* GetMsgName(T& tMsg){ return "INVALID"; }
+	template<> const char* GetMsgName(MsgBase& tMsg){ return MsgUtil::GetMsgName(tMsg.m_wMH); }
+	*/
+	//file: __FILE__, line: __LINE__, function: __FUNCTION__ cond: %s, MSGNAME: %s, ????, GetMsgName() ,
+
 }
 
 void CreateDynamicArgumentStmt(std::string& toRet, size_t sizeCnt)
@@ -537,4 +545,472 @@ while( idx < str.len() )
 }
 
 */
+#include <tuple>
+#include <map>
+
+struct lexicographical_TYPE
+{
+	lexicographical_TYPE( int a, std::string& b, unsigned short c )
+		:m_a(a),m_b(b),m_c(c)
+	{
+
+	}
+
+	int m_a;
+	std::string m_b;
+	unsigned short m_c;
+
+	bool operator <(const lexicographical_TYPE& rhs) const
+	{
+		return std::tie(m_a, m_b, m_c) < std::tie(rhs.m_a, rhs.m_b, rhs.m_c);
+	}
+};
+
+/*
+auto make_tie(const lexicographical_TYPE& rhs) -> decltype( std::tr1::tuple& )
+{
+	return std::tie(rhs.m_a, rhs.m_b, rhs.m_c);
+}
+
+bool lexicographical_TYPE::operator <(const lexicographical_TYPE& rhs) const
+{
+	//return std::tie(m_a, m_b, m_c) < std::tie(rhs.m_a, rhs.m_b, rhs.m_c);
+	return make_tie(*this) < make_tie(rhs);
+}
+*/
+std::ostream& operator <<(std::ostream& lhs, const lexicographical_TYPE& rhs)
+{
+	return lhs << "A(" << rhs.m_a << "),B("<< rhs.m_b << "),C("<<rhs.m_c << ")";
+}
+
+class DestructA{
+public:
+	virtual ~DestructA()
+	{
+	}
+};
+class DestructB : public DestructA{
+public:
+	virtual ~DestructB()
+	{
+	}
+
+};
+class DestructC : public DestructB{
+public:
+	~DestructC()
+	{
+	}
+
+};
+class DestructD : public DestructC{
+public:
+	~DestructD()
+	{
+	}
+};
+
+void WorkImpl<lexicographical_comparison>::DoWork()
+{
+	lexicographical_TYPE A[]= 
+	{
+		lexicographical_TYPE(32, std::string("MyTimes"), 64),
+		lexicographical_TYPE(32, std::string("MyTimes"), 72),
+		lexicographical_TYPE(31, std::string("MyTimes"), 64),
+		lexicographical_TYPE(32, std::string("MyTime"), 64),
+		lexicographical_TYPE(32, std::string("MyTimes"), 71),
+	};
+	
+	std::map< lexicographical_TYPE, int > myMap;
+	int Value = 0;
+	for each(auto& a in A)
+	{
+		myMap.insert( std::make_pair(a, ++Value) );
+	}
+
+	auto iter = myMap.begin();
+	do{
+		std::cout << "KEY("<< iter->first << ") VALUE(" << iter->second << ")" << std::endl;
+	}while(++iter != myMap.end());
+
+	DestructA* pA = new DestructD;
+	delete pA;
+
+	return ;
+}
+
+
+class CLocalBraceStatic
+{
+public:
+	CLocalBraceStatic(){}
+	~CLocalBraceStatic(){}
+};
+
+union HostParamAddr
+{	
+	DWORD64 dw64Value;
+	struct
+	{
+		DWORD64 dummyLSB:3;
+		DWORD64 wPort:16;
+		DWORD64 dummy1: 6;
+		DWORD64 dwIP:32;
+		DWORD64 dummy2: 6;
+		DWORD64 MSB: 1;
+	};
+
+	HostParamAddr():MSB(0){}
+};
+
+void WorkImpl<localBraceStatic>::DoWork()
+{
+	static bool bInitFlag = true;
+	
+	if(true == bInitFlag)
+	{
+		static CLocalBraceStatic _Instance;
+	}
+
+/*
+	HostParamAddr hostParamAddr;
+	hostParamAddr.wPort = 0x1F1F1F1F1F1F1F1F;
+	hostParamAddr.dummy1 = 0x2F2F2F2F2F2F2F2F;
+	hostParamAddr.dwIP = 0x3F3F3F3F3F3F3F3F;
+	hostParamAddr.dummy2 = 0x4F4F4F4F4F4F4F4F;
+	hostParamAddr.dummyMSB = 0x5F5F5F5F5F5F5F5F;
+*/
+}
+
+enum eBitLists
+{
+	eBitLists_INVALID,
+	eBitLists_A,
+	eBitLists_B,
+	eBitLists_C,
+
+	eBitLists_CNT,
+};
+
+template<int> struct BitTypeT;
+
+template<> struct BitTypeT<eBitLists_INVALID>
+{
+public:
+	enum { bitSize = 0, byteSize = 0 };
+};
+
+#define DECLARE_BITTYPE( eBitType, curBitSize ) template<> class BitTypeT< eBitType > {  \
+public:\
+	enum {	bitSize = curBitSize + BitTypeT< eBitType-1 >::bitSize,\
+	byteSize = curBitSize + BitTypeT< eBitType-1 >::byteSize, };};
+
+DECLARE_BITTYPE(eBitLists_A, 4);
+DECLARE_BITTYPE(eBitLists_B, 7);
+DECLARE_BITTYPE(eBitLists_C, 5);
+
+template<> struct BitTypeT<eBitLists_CNT>
+{
+	enum {	bitSize = BitTypeT< eBitLists_CNT-1 >::bitSize,
+			byteSize = 1 + (BitTypeT< eBitLists_CNT-1 >::byteSize / 8), };
+};
+
+
+class HOSTEXECUTER
+{
+	HostParamAddr paramAddr;
+	char lastInput[10];
+
+public:
+	void Run();
+
+	//return false if user select quit
+	bool GetInput(){
+		PrintWelcome();
+
+		std::cin >> lastInput;
+		if(lastInput[0] == 'q')
+			return false;
+
+		return true;
+	}
+
+	void PrintWelcome();
+
+	HANDLE HostsExecute( unsigned long long nCnt );
+
+
+
+};
+
+class HostProcessPool
+{
+public:
+	HostProcessPool():_HostProcessQuantity(0){ for each( HANDLE& handle in _HostProcesses) handle = INVALID_HANDLE_VALUE; }
+
+	bool CheckAlive();
+	//void HostsExecute( size_t sizeToExecute, HOSTEXECUTER& executer );
+	void EventSignaled( int nIdx );
+	void GrowSize(size_t sizeToGrow);
+
+	void Run( HOSTEXECUTER& );
+
+
+private:
+	size_t		_HostProcessQuantity;
+	HANDLE		_HostProcesses[256];
+};
+
+void HostProcessPool::GrowSize( size_t sizeToGrow )
+{
+	size_t sizeResult = _HostProcessQuantity + sizeToGrow;
+	if( sizeResult < _countof(_HostProcesses)  )
+		_HostProcessQuantity = sizeResult;
+
+/*
+	InterlockedCompareExchange(
+		&_HostProcessQuantity,
+		_HostProcessQuantity + sizeToGrow,
+		(_HostProcessQuantity + sizeToGrow) < _countof(_HostProcesses));
+*/
+	return ;
+}
+
+void HostProcessPool::Run( HOSTEXECUTER& executer )
+{
+	if(false == CheckAlive())
+	{
+		HANDLE* iterCur = _HostProcesses;
+		HANDLE* iterEnd = _HostProcesses + _HostProcessQuantity;
+
+		while(iterCur != iterEnd)
+		{
+			if( (*iterCur) == INVALID_HANDLE_VALUE)
+				(*iterCur) = executer.HostsExecute( 1 );
+
+			iterCur++;
+		}
+	}
+}
+
+
+
+bool HostProcessPool::CheckAlive()
+{
+	DWORD dwRet = WaitForMultipleObjects(_HostProcessQuantity, _HostProcesses, FALSE, 0);
+	 switch(dwRet )
+	 {
+	 case WAIT_TIMEOUT:
+		 return true;
+
+	 case WAIT_FAILED:
+		 {
+			 HRESULT hrRet = GetLastError();
+			 _com_error err(hrRet);
+			 OutputDebugStringW(err.ErrorMessage());
+			 if(ERROR_INVALID_HANDLE != hrRet)
+				 std::cout << __FUNCTION__ "() fatal error occurred" << std::endl;
+		 }
+		 return false;
+
+	 default:
+		 EventSignaled( dwRet - WAIT_OBJECT_0 );
+		 return false;
+	 }
+}
+
+void HostProcessPool::EventSignaled( int nIdx )
+{
+	if(nIdx < 0 || nIdx >= _HostProcessQuantity)
+	{
+		std::cout << __FUNCTION__ "() invalid index ("<< nIdx << ")" << std::endl;
+		return ;
+	}
+	std::cout << __FUNCTION__ "() Process terminated " << std::endl
+		<< "HANDLE(" << _HostProcesses[nIdx]	<< ")"
+		<< "INDEX("  << nIdx					<< ")";
+	_HostProcesses[nIdx] = INVALID_HANDLE_VALUE;
+}
+
+
+
+void HOSTEXECUTER::Run()
+{
+	paramAddr.dwIP = inet_addr("127.0.0.1");
+	paramAddr.wPort = 5200;
+
+	HostProcessPool processPool;
+
+	while(GetInput())
+	{
+		if(lastInput[0] > '0' || lastInput[0] <= '9')
+			processPool.GrowSize( atoi(lastInput) );
+		else
+			std::cout << "Unavailable input" << std::endl;
+
+		processPool.Run( *this );
+	}
+}
+
+void HOSTEXECUTER::PrintWelcome()
+{
+	const char* szLine = "**************************************************************";
+
+	std::cout << std::endl
+		<< szLine		<< std::endl
+		<< "IP:"		<< paramAddr.dwIP		<< std::endl
+		<< "Port:"		<< paramAddr.wPort		<< std::endl
+		<< "HostParam:" << paramAddr.dw64Value	<< std::endl
+		<< szLine		<< std::endl
+		<< "Input ('q' to exit, Numbers to hosts execute count): ";	
+}
+
+HANDLE HOSTEXECUTER::HostsExecute( unsigned long long nCnt )
+{
+/*
+	std::stringstream ssCommand;
+	ssCommand << "start \"\" \"C:\\vector\\programtrunk\\bin\\BinDX11\\GameHostDX11D.exe\" -dedicated " << paramAddr.dw64Value;
+	
+	std::cout << ssCommand.str() << std::endl;
+	system(ssCommand.str().c_str());
+*/
+	HANDLE handleRet = INVALID_HANDLE_VALUE;
+
+	std::stringstream ssCommand;
+	ssCommand << "\"C:\\vector\\programtrunk\\bin\\BinDX11\\GameHostDX11D.exe\" -dedicated " << paramAddr.dw64Value
+		<< " -parent " << GetCurrentProcessId();
+	STARTUPINFOA startInfo;
+	startInfo.cb = sizeof(STARTUPINFO);
+
+	PROCESS_INFORMATION processInfo;
+	
+	ZeroMemory(&startInfo, sizeof(startInfo));	
+	ZeroMemory(&processInfo, sizeof(processInfo));
+
+
+	LPSTR szCommandLine = _strdup(ssCommand.str().c_str());
+	if(FALSE == ::CreateProcessA(nullptr, szCommandLine, nullptr, nullptr, false, CREATE_NEW_CONSOLE, nullptr, nullptr, &startInfo, &processInfo))
+	{
+		std::cout << "Failed to create process" << std::endl;		
+	}
+	else
+	{
+		handleRet = processInfo.hProcess;
+	}
+
+	return handleRet;
+}
+
+
+void WorkImpl<hostExecuter>::DoWork()
+{
+	int bitSize  =  BitTypeT<eBitLists_CNT>::bitSize;
+	int byteSize = BitTypeT<eBitLists_CNT>::byteSize;
+
+	HOSTEXECUTER executer;
+	executer.Run();
+
+
+}
+#include <boost/lockfree/queue.hpp>
+
+#include <boost/smart_ptr/detail/spinlock.hpp>
+#include <boost/type_traits.hpp>
+
+//컨테이너에서 꺼내다 쓴 데이터의 유효성은 꺼내 쓴 입장에서 확보하도록 한다.
+//이 컨테이너는 티켓 창구의 역할만 하고, 실제로 있는지는 다시한번 가서 보고 없으면 또 꺼내달래서 쓰면 된다.
+//다만... 티켓 전체가 쓰레기 박스가 되는 경우를 간과해서는 안된다...
+//애초에 호스트가 강제 셧다운 되는 비상상황은 서비스 불가능 상황이니,
+//이 시스템이 동작하지 않는 상황은 서비스불가 상황 밖에 없으므로 믿고 쓸 수 있도록 하자.
+//Hit ratio
+
+//모든 풀 안의 호스트는 1회용으로 쓰고, 쓰이고 나면 호스트가 알아서 다시 붙도록 하자.
+//모자라면 새로 호스트를 만들어서 붙이자.
+
+
+//포인터 자료형 같은거 받아서 쓰면 안된다.
+
+//관리되는 entity의 특질. keytype = '불확정성'기반, entity life span = '예외 이외에는 살아있는' ,
+template< typename T >
+class QueueSpinLocked
+{
+public:	
+	static_assert( boost::is_pointer<T>::value == false, "Unable to use pointer type" );
+
+	void push(const T& toPush)
+	{
+		boost::detail::spinlock::scoped_lock scopeLock(spinLock);
+		_container.push(toPush);
+	}
+	bool pop(T& toPop)
+	{
+		if( true == _container.empty())
+			return false;
+		
+		boost::detail::spinlock::scoped_lock scopeLock(spinLock);
+		toPop = _container.front();
+		_container.pop();
+
+		return true;
+	}
+
+	//만약 find-(remove~erase)같은 것을 구현해야 한다면, 현재의 spin_lock 기반의 고성능 구조는 어울리지 않는다.
+	//우선순위가 배정되지 않으며(pop보다 remove가 우선되어야 invalid entity 가 pop되지 않는다)
+	//이로인해 우선권을 가져야 하는 동작 구현이 불가능 하기 때문이다.
+	//sync model을 '우선권 지원 - 고성능' 형태로 가져가도록 한다.
+
+private:
+	boost::detail::spinlock spinLock;
+	std::queue< T >	_container;
+};
+
+struct HOST_REQUEST_WAITING_CONTEXT
+{
+	//GID gidStage;
+	time_t timeReserved;
+};
+
+
+struct DataForm
+{
+	char myChar;
+	DataForm(char cChar):myChar(cChar){};
+	DataForm& GetMyData() {return *this;}
+};
+
+void WorkImpl<lockfreeContainer>::DoWork()
+{
+	QueueSpinLocked<int> instance;
+/*
+	int arrINTGER[] = {3,47,85,6989,48,756,3,5,};
+	boost::lockfree::queue<int> aQueue;
+
+	for each(int& nVal in arrINTGER)
+	{
+		aQueue.push(nVal);
+	}
+
+
+	int toPop(0);
+	aQueue.pop(toPop);	
+*/
+	DataForm dataForm('a');
+	DataForm dataForm2('b');
+	DataForm& rDataForm = dataForm.GetMyData();
+	rDataForm = dataForm2;
+
+	int a = 0;
+	int b = 1;
+	int& rA = a;
+
+	rA = b;
+
+	char szName[] = {"랜덤"};
+	std::string strName = szName;
+
+
+	//numeric_limits<float>::epsilon();
+}
+
+
 

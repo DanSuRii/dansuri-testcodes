@@ -31,10 +31,19 @@ REGISTER_WORKS(DbgAssignString)
 REGISTER_WORKS(staticTest)
 REGISTER_WORKS(statTraits)
 REGISTER_WORKS(IterateRegister)
+REGISTER_WORKS(bitPartition)
+REGISTER_WORKS(lambdaTest)
+REGISTER_WORKS(lexicographical_comparison)
+REGISTER_WORKS(sharedPointer)
+REGISTER_WORKS(lambdaWithBind)
+REGISTER_WORKS(localBraceStatic)
+REGISTER_WORKS(hostExecuter)
+REGISTER_WORKS(lockfreeContainer)
+
 
 #if 0
 
-void WorkImpl<IterateRegister>::DoWork()
+void WorkImpl<lockfreeContainer>::DoWork()
 {
 
 }

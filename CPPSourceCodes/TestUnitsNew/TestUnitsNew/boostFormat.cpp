@@ -1,4 +1,5 @@
 #include "work.h"
+#include <iostream>
 #include <boost/format.hpp>
 
 void WorkImpl<boostFormat>::DoWork()

@@ -55,6 +55,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Boost_1_54_0\bin.v2\libs\atomic\build\msvc-10.0\debug\link-static\threading-multi</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -75,6 +76,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bitPartition.cpp" />
     <ClCompile Include="BLOBAgent.cpp" />
     <ClCompile Include="boostDateTime.cpp" />
     <ClCompile Include="boostFormat.cpp" />
@@ -83,11 +85,14 @@
     <ClCompile Include="classMemberDebugPinter.cpp" />
     <ClCompile Include="exponentiationTpl.cpp" />
     <ClCompile Include="IterateRegister.cpp" />
+    <ClCompile Include="lambdaTest.cpp" />
+    <ClCompile Include="lambdaWithBind.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MsgDispatcherWithBOOST.cpp" />
     <ClCompile Include="Multicaster.cpp" />
     <ClCompile Include="NulltermChecker.cpp" />
     <ClCompile Include="packetVersionComparsion.cpp" />
+    <ClCompile Include="sharedPointer.cpp" />
     <ClCompile Include="StatTraits.cpp" />
     <ClCompile Include="test.c" />
     <ClCompile Include="testInherit.cpp" />
