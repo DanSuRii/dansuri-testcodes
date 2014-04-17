@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{429FEAFB-9A0A-4B82-85AF-50D112514F85}</ProjectGuid>
+    <ProjectGuid>{68FE0B3A-F13D-4C8A-91C0-3067ED3B7022}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>TestUnitsNew</RootNamespace>
+    <RootNamespace>ConsoleExitEvent</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -45,7 +45,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -53,7 +54,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Boost_1_54_0\bin.v2\libs\atomic\build\msvc-10.0\debug\link-static\threading-multi</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,62 +74,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bitPartition.cpp" />
-    <ClCompile Include="BLOBAgent.cpp" />
-    <ClCompile Include="boostDateTime.cpp" />
-    <ClCompile Include="boostFormat.cpp" />
-    <ClCompile Include="boostSmartPointers.cpp" />
-    <ClCompile Include="bytebuffer.cpp" />
-    <ClCompile Include="classMemberDebugPinter.cpp" />
-    <ClCompile Include="exponentiationTpl.cpp" />
-    <ClCompile Include="IterateRegister.cpp" />
-    <ClCompile Include="lambdaTest.cpp" />
-    <ClCompile Include="lambdaWithBind.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MsgDispatcherWithBOOST.cpp" />
-    <ClCompile Include="Multicaster.cpp" />
-    <ClCompile Include="MultiIndexTest.cpp" />
-    <ClCompile Include="NulltermChecker.cpp" />
-    <ClCompile Include="ObserverGeneric.cpp" />
-    <ClCompile Include="packetVersionComparsion.cpp" />
-    <ClCompile Include="sharedPointer.cpp" />
-    <ClCompile Include="StatTraits.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="test.c">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="testInherit.cpp" />
-    <ClCompile Include="testInheritCall.cpp" />
-    <ClCompile Include="vectorPqueuePerformance.cpp" />
-    <ClCompile Include="VoteBase.cpp" />
-    <ClCompile Include="WorkRepository.cpp" />
-    <ClCompile Include="workTemplate.cpp" />
-    <ClCompile Include="ZoneMsgDispatcher.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BLOBAgentDataForm.h" />
-    <ClInclude Include="NulltermChecker.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="test.h" />
-    <ClInclude Include="test_r.h" />
-    <ClInclude Include="VoteBase.h" />
-    <ClInclude Include="Work.h" />
-    <ClInclude Include="WorksBase.h" />
-    <ClInclude Include="ZoneMsgDispatcher.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xsd Include="PerfCounterTest.xsd">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </Xsd>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="test.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="test.xml">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

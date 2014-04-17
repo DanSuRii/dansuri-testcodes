@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include <cstdlib>
 #include "Work.h"
 

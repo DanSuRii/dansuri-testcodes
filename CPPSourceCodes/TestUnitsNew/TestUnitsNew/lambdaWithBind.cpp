@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Work.h"
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -37,20 +38,27 @@ public:
 
 void WorkImpl<lambdaWithBind>::DoWork()
 {
-#if 0
 	bool bFlag = false;
 	struct{
 		const char* szArgChar;
-		boost::function< void (void) > fn;
+		//boost::function< void (void) > fn;
+		std::function< void(void) > fn;
 	}
 	argList[] ={
 		//{},
-		{"-retail", boost::bind( [](bool& bFlag)->void{ bFlag = true; }, bFlag )},
+		//{"-retail", boost::bind( [](bool& bFlag)->void{ bFlag = true; }, bFlag )},
+		{"-retail", []()->void{ } },
 	};
 
-#endif
+/*
+	boost::function<void( HostRuntimeConfiguration& )> f = (_1.m_Config = 3);
+*/
 
 	HostRuntimeConfiguration runtimeConfiguration;
 	runtimeConfiguration.dedicatedSwitch = eHostDedicateSwitch_DirectGS;
 	runtimeConfiguration.hostSwitch = eHostSwitch_Dedicated;
+
+/*
+	f(runtimeConfiguration);
+*/
 }

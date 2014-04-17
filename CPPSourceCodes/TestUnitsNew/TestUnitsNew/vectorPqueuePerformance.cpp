@@ -1,3 +1,4 @@
+#include "stdafx.h"
 //#include <algorithm>
 #include <vector>
 #include <queue>
@@ -229,6 +230,23 @@ void WorkImpl<vectorPqueuePerformance>::DoWork()
 
 void WorkImpl<vectorBinaricinsert>::DoWork()
 {
+
+	std::priority_queue<int, std::vector<int>, std::greater<int>> pQueue;
+	pQueue.push(100);
+	pQueue.push(30);
+	pQueue.push(100);
+	pQueue.push(70);
+	pQueue.push(50);
+
+	int nValue = 0;
+	while( false == pQueue.empty() )
+	{
+		nValue = pQueue.top();
+		std::cout << nValue << std::endl;
+		pQueue.pop();
+	}
+
+
 	int myints[] = {10,20,30,30,20,10,10,20};
 	std::vector<int> v(myints,myints+8);           // 10 20 30 30 20 10 10 20
 

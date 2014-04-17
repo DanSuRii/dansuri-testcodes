@@ -1,6 +1,6 @@
+#include "stdafx.h"
 #pragma comment(lib, "ws2_32.lib")
 
-#include <WinSock2.h>
 #include <windows.h>
 #include <vector>
 #include <queue>
@@ -223,6 +223,11 @@ bool TestAllOrNothing( bool testOne, bool testTwo, bool testThree )
 		testTwo,
 		testThree
 	};
+
+	for each(bool idx in arrBool)
+	{
+
+	}
 
 	for(int i = 1; i < _countof(arrBool); ++i)
 	{
@@ -1013,4 +1018,81 @@ void WorkImpl<lockfreeContainer>::DoWork()
 }
 
 
+class InheritBase
+{
+public:
 
+	InheritBase(){ }
+
+	virtual void MethodA() = 0;
+	virtual void MethodB() = 0;
+	void CreateInitialize(){ MethodA(); }
+
+};
+class InheritDerivedA : public InheritBase
+{
+public:
+	
+
+	virtual void MethodA()
+	{
+		std::cout << __FUNCTION__ << std::endl;
+	}
+
+	virtual void MethodB()
+	{
+		std::cout << __FUNCTION__ << std::endl;
+	}
+
+
+};
+class InheritDerivedB : public InheritBase
+{
+public:
+
+	virtual void MethodA()
+	{
+		std::cout << __FUNCTION__ << std::endl;
+	}
+
+	virtual void MethodB()
+	{
+		std::cout << __FUNCTION__ << std::endl;
+	}
+
+};
+
+template <typename T>
+T* construct_and_initalize()
+{
+	T* obj = new T ;
+	obj->CreateInitialize();
+
+	return obj;
+};
+
+
+
+#include <initializer_list>
+void WorkImpl<InheritCall>::DoWork()
+{
+	InheritDerivedA* instA = construct_and_initalize<InheritDerivedA>();
+	InheritDerivedB* isntB = construct_and_initalize<InheritDerivedB>();
+
+	int listInt[] = { 1, 10, 30, 70, 90 };
+	std::vector<int> vecInt( std::begin(listInt), std::end(listInt) );
+
+	auto it = std::find( vecInt.begin(), vecInt.end(), 30 );
+
+	std::remove(vecInt.begin(), vecInt.end(), 10);
+
+/*
+	std::map< char, int > mapTest;
+	mapTest[ 'a' ] = 1;
+	mapTest[ 'b' ] = 2;
+	mapTest[ 'c' ] = 3;
+
+	std::find( std::begin(mapTest), std::end(mapTest), 'c' );
+*/
+	
+}

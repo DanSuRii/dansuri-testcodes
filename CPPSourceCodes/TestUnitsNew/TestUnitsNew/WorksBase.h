@@ -39,11 +39,13 @@ REGISTER_WORKS(lambdaWithBind)
 REGISTER_WORKS(localBraceStatic)
 REGISTER_WORKS(hostExecuter)
 REGISTER_WORKS(lockfreeContainer)
-
+REGISTER_WORKS(ObserverGeneric)
+REGISTER_WORKS(InheritCall)
+REGISTER_WORKS(MultiIndexTest)
 
 #if 0
 
-void WorkImpl<lockfreeContainer>::DoWork()
+void WorkImpl<MultiIndexTest>::DoWork()
 {
 
 }

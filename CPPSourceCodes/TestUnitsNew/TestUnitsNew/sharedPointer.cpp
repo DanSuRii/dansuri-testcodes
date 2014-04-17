@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Work.h"
 #include <list>
 #include <boost/shared_ptr.hpp>

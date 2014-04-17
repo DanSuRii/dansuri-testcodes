@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "work.h"
 #include <iostream>
 #include <boost/format.hpp>

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "Work.h"
 
 #include <boost/scoped_ptr.hpp>

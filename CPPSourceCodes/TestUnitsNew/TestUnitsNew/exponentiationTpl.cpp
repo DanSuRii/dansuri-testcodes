@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Work.h"
 
 template< unsigned long long B, unsigned char P >

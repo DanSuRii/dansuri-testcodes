@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Work.h"
 
 #include <boost/foreach.hpp>
