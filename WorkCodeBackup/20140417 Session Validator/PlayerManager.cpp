@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "Misc/Prime.h"
+#include "SessionValidator.h"
 #include "PlayerManager.h"
 
 namespace SvrMaster
@@ -63,6 +64,7 @@ namespace SvrMaster
 		pPlayer->SetUID(uid);
 		pPlayer->SetAccountName(szAccount);
 		pPlayer->SetSvrKey(keySvr);
+		pPlayer->SetSessionKey( SessionValidator::Instance().PushSession() );
 
 		// Key 발급.
 		AddPlayer(pPlayer);
@@ -72,8 +74,7 @@ namespace SvrMaster
 		// 자료구조 정보 추가.
 		m_mapUser_UID.insert(std::make_pair(uid, pPlayer));
 		m_mapUser_Account.insert(std::make_pair(szAccount, pPlayer));
-
-		SetSessionExpired(pPlayer);
+		m_mapUser_Session.insert(std::make_pair(pPlayer->GetSessionKey(), pPlayer));
 		return pPlayer;
 	}
 
@@ -105,17 +106,17 @@ namespace SvrMaster
 	}
 
 
-// 	void CPlayerManager::LogOutForce( UID uid )
-// 	{
-// 		CPlayer* pPlayer = GetPlayerByUID(uid);
-// 		if (NULL == pPlayer)
-// 		{
-// 			LOG_SYSTEM(E)("[" __FUNCTION__ "] Player(%d) Logout Error.", uid);
-// 			return ;
-// 		}
-// 
-// 		LogOut(*pPlayer);
-// 	}
+	void CPlayerManager::LogOutForce( UID uid )
+	{
+		CPlayer* pPlayer = GetPlayerByUID(uid);
+		if (NULL == pPlayer)
+		{
+			LOG_SYSTEM(E)("[" __FUNCTION__ "] Player(%d) Logout Error.", uid);
+			return ;
+		}
+
+		LogOut(*pPlayer);
+	}
 
 
 	void CPlayerManager::LogOut( CPlayer& refPlayer )
@@ -136,7 +137,13 @@ namespace SvrMaster
 				m_mapUser_Account.erase(it);
 			}
 		}
-		SetSessionChecked(&refPlayer);
+		size_t sizeErased = 0;
+		{
+			sizeErased = m_mapUser_Session.erase( refPlayer.GetSessionKey() );
+			//어짜피 만료 될 세션은 자동으로 사라진다. 이미 로그인 성공 / 시간 만료등으로
+			//없어졌을지도 모를 세션을 여기서 다시 없앤다고 자료구조 전체를 돌 필요가 없다.
+			//SessionValidator::Instance().EraseSession( refPlayer.GetSessionKey() );
+		}
 
 		// Key 해지.
 		DelPlayer(&refPlayer);
@@ -180,46 +187,31 @@ namespace SvrMaster
 		Del(pPlayer->GetKey());
 	}
 
-	void CPlayerManager::ProcessExpired(void)
+	void CPlayerManager::ExpireSession( DWORD64 dw64Session )
 	{
-		if(m_lstWaitExpired.empty())
-			return ;
-
-		time_t timeCur = ::time(NULL);
-
-		do
+		auto iterSession = m_mapUser_Session.find(dw64Session);
+		if(iterSession != m_mapUser_Session.end())
 		{
-			auto pPlayer = m_lstWaitExpired.front();
-
-			if(pPlayer->GetTimeExpiration() > timeCur)
-				break;
-
-			m_lstWaitExpired.pop_front();
-			LOG_SYSTEM(N)(__FUNCTION__ "() Session remove by expire, AccountID(%s), UID(%d)", pPlayer->GetAccountName(), pPlayer->GetUID());
-			LogOut(*pPlayer);
-
-		} while(!m_lstWaitExpired.empty());
-	}
-
-	void CPlayerManager::SetSessionChecked( CPlayer* pPlayer )
-	{
-		auto it = m_lstWaitExpired.begin();
-
-		for ( ; it!=m_lstWaitExpired.end() ; ++it)
-		{
-			if (pPlayer == *it)
+			CPlayer* pPlayer = iterSession->second;
+			if(nullptr != pPlayer)
 			{
-				m_lstWaitExpired.erase(it);
-				break;
+				LOG_SYSTEM(N)(__FUNCTION__ "() Session remove by expire, AccountID(%s), UID(%d)",
+					pPlayer->GetAccountName(), pPlayer->GetUID());
+				LogOut(*pPlayer);
 			}
 		}
 	}
 
-	bool CPlayerManager::SetSessionExpired( CPlayer* pPlayer )
+	void CPlayerManager::PlayerCheckIn( CPlayer& pPlayer )
 	{
-		pPlayer->SetTimeExpiration();
-		m_lstWaitExpired.push_back(pPlayer);
-		return true;
+		SessionValidator::Instance().EraseSession(pPlayer.GetSessionKey());
+		m_mapUser_Session.erase(pPlayer.GetSessionKey());
+	}
+
+	bool CPlayerManager::ReserveMoveSession( CPlayer& refPlayer )
+	{
+		refPlayer.SetSessionKey( SessionValidator::Instance().PushSession() );
+		return m_mapUser_Session.insert(std::make_pair(refPlayer.GetSessionKey(), &refPlayer)).second;
 	}
 
 }

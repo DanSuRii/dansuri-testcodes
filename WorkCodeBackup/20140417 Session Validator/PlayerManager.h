@@ -12,8 +12,7 @@ namespace SvrMaster
 	{
 		typedef std::map<UID, CPlayer*>							MapUser_UID;
 		typedef std::map<std::string,	CPlayer*>				MapUser_ACCOUNT;
-		typedef	std::list<CPlayer*>								LstUser;
-
+		typedef std::map<DWORD64,		CPlayer*>				MapUser_SESSION;
 	public:
 		CPlayerManager(void);
 		~CPlayerManager(void);
@@ -23,9 +22,8 @@ namespace SvrMaster
 		CPlayer*	GetPlayerByAccount(char* pstrAccount);
 
 		CPlayer*	LogIn(UID uid, char* szAccount, LKEY keySvr);
-		void		ProcessExpired(void);
-		void		SetSessionChecked(CPlayer* pPlayer);
-		bool		SetSessionExpired(CPlayer* pPlayer);
+		void		PlayerCheckIn( CPlayer& pPlayer );
+		bool		ReserveMoveSession(CPlayer&);
 
 		struct LOGOUT_INFORMATION
 		{
@@ -37,16 +35,16 @@ namespace SvrMaster
 		bool		LogOut(UID uid, CVSock* pSock, LOGOUT_INFORMATION* pInfo= nullptr);
 
 		void		LogOut( CPlayer& );
-// 		void		LogOutForce(UID uid);
+		void		LogOutForce(UID uid);
+		void		ExpireSession( DWORD64 dw64Session );
 
 		int			GetPlayerCount()						{ return m_nPlayerCount; }
-	private:
 
 	private:
-		int						m_nPlayerCount;
-		MapUser_UID				m_mapUser_UID;
-		MapUser_ACCOUNT			m_mapUser_Account;
-		LstUser					m_lstWaitExpired;
+		int					m_nPlayerCount;
+		MapUser_UID			m_mapUser_UID;
+		MapUser_ACCOUNT		m_mapUser_Account;
+		MapUser_SESSION		m_mapUser_Session;
 
 		void		AddPlayer(CPlayer* pPlayer);
 		void		DelPlayer(CPlayer* pPlayer);
