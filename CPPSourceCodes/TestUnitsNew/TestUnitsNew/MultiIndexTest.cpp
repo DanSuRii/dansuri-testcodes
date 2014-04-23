@@ -109,9 +109,38 @@ void WorkImpl<MultiIndexTest>::DoWork()
 {
 	employee_set es;
 	es.insert( employee(1, "denny") );
-	es.insert( employee(2, "annie") );
+	es.insert( employee(2, "annie") );	
+	es.insert( employee(3, "hue") );
+	es.insert( employee(4, "zunnie") );	
+
 	
 	print_out_by_name(es);
+
+	{
+		auto& index = es.get<0>();
+		auto it = index.find(employee(2, std::string()));
+		if(it != index.end())
+		{
+			employee empl(*it);
+			empl.name = "zunnie";
+			index.replace( it, empl );
+		}
+	}
+
+
+	print_out_by_name(es);
+
+	{
+		auto& index = es.get<1>();
+		auto itLess = index.lower_bound( "zunnie" );
+		auto itUpper = index.upper_bound( "zunnie" );
+
+		std::copy(
+			itLess,itUpper,
+			std::ostream_iterator<employee>(std::cout,"|"));
+
+		std::cout << std::endl << "Distance of iterators: " << std::distance(itLess, itUpper) << std::endl;
+	}
 
 	std::string strValue("bunnies");
 	
