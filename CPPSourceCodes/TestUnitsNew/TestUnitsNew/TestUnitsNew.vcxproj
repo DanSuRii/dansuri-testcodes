@@ -86,6 +86,7 @@
     <ClCompile Include="lambdaTest.cpp" />
     <ClCompile Include="lambdaWithBind.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="maptest.cpp" />
     <ClCompile Include="MsgDispatcherWithBOOST.cpp" />
     <ClCompile Include="Multicaster.cpp" />
     <ClCompile Include="MultiIndexTest.cpp" />

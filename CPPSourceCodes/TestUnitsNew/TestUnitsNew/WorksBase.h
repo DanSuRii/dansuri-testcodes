@@ -42,10 +42,11 @@ REGISTER_WORKS(lockfreeContainer)
 REGISTER_WORKS(ObserverGeneric)
 REGISTER_WORKS(InheritCall)
 REGISTER_WORKS(MultiIndexTest)
+REGISTER_WORKS(MapTest)
 
 #if 0
 
-void WorkImpl<MultiIndexTest>::DoWork()
+void WorkImpl<MapTest>::DoWork()
 {
 
 }
