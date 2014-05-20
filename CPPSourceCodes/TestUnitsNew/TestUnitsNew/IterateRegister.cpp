@@ -13,11 +13,12 @@ enum EMYFunctions
 	MyFunctions_FIRSTFUNC,
 	MyFunctions_SECONDFUNC,
 	MyFunctions_THIRDFUNC,
+	//MyFunctions_FORTH_FUNC,
 
 	MyFunctions_CNT
 };
 
-template<EMYFunctions>void MyFunc(){ std::cout << "InvalidFunc" << std::endl; }
+template<EMYFunctions>void MyFunc();//{ std::cout << "InvalidFunc" << std::endl; }
 
 template<> void MyFunc<MyFunctions_FIRSTFUNC>(){	std::cout << "FirstFunc" << std::endl; }
 template<> void MyFunc<MyFunctions_SECONDFUNC>(){	std::cout << "SecondFunc" << std::endl; }

@@ -15,7 +15,7 @@ void NULLTERM_CHECKER::Create()
 {
 	NULLTERM_CHECKER _INstance;
 	char myArr[10];
-	FindWrapper<char*, char>( myArr, myArr + _countof(myArr), 0 );
+	FindWrapper<char*, char>( std::begin(myArr), std::end(myArr), 0 );
 	wchar_t SecondArr[10];
 	FindWrapper<wchar_t*, wchar_t>( SecondArr, SecondArr + _countof(SecondArr), 0x0000 );
 
