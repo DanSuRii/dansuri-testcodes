@@ -43,10 +43,11 @@ REGISTER_WORKS(ObserverGeneric)
 REGISTER_WORKS(InheritCall)
 REGISTER_WORKS(MultiIndexTest)
 REGISTER_WORKS(MapTest)
+REGISTER_WORKS(boost_jsonparser)
 
 #if 0
 
-void WorkImpl<MapTest>::DoWork()
+void WorkImpl<boost_jsonparser>::DoWork()
 {
 
 }

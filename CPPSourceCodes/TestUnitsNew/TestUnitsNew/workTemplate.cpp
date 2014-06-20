@@ -812,7 +812,7 @@ bool HostProcessPool::CheckAlive()
 		 {
 			 HRESULT hrRet = GetLastError();
 			 _com_error err(hrRet);
-			 OutputDebugStringW(err.ErrorMessage());
+			 OutputDebugString(err.ErrorMessage());
 			 if(ERROR_INVALID_HANDLE != hrRet)
 				 std::cout << __FUNCTION__ "() fatal error occurred" << std::endl;
 		 }
